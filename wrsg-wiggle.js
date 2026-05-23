@@ -4,22 +4,24 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (!wiggleTag || !engineTag) return;
 
   try {
-    // 1. Fetch your clean .doctor text file lines natively from this repo
-    const response = await fetch(wiggleTag.getAttribute('src'));
+    // Adding a text headers override unblocks the browser security block
+    const response = await fetch(wiggleTag.getAttribute('src'), {
+      headers: { 'Content-Type': 'text/plain' }
+    });
     const docText = await response.text();
     
-    // 2. Inject the text directly into a hidden browser container
+    // Inject the raw text safely into the page
     const pre = document.createElement('pre');
     pre.id = 'raw-data';
     pre.style.display = 'none';
     pre.textContent = docText;
     document.body.appendChild(pre);
     
-    // 3. Load and execute your custom doggy engine from the d repo
+    // Load and run your Doggy engine
     const script = document.createElement('script');
     script.src = engineTag.getAttribute('src');
     document.head.appendChild(script);
   } catch (e) {
-    console.error("WRSGwiggle Error: Could not connect document nodes.", e);
+    console.error("WRSGwiggle Security Block:", e);
   }
 });
