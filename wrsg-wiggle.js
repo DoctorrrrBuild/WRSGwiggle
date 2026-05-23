@@ -4,24 +4,22 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (!wiggleTag || !engineTag) return;
 
   try {
-    // Adding a text headers override unblocks the browser security block
     const response = await fetch(wiggleTag.getAttribute('src'), {
       headers: { 'Content-Type': 'text/plain' }
     });
+    if (!response.ok) throw new Error("File not found");
     const docText = await response.text();
     
-    // Inject the raw text safely into the page
     const pre = document.createElement('pre');
     pre.id = 'raw-data';
     pre.style.display = 'none';
     pre.textContent = docText;
     document.body.appendChild(pre);
     
-    // Load and run your Doggy engine
     const script = document.createElement('script');
     script.src = engineTag.getAttribute('src');
     document.head.appendChild(script);
   } catch (e) {
-    console.error("WRSGwiggle Security Block:", e);
+    document.body.innerHTML = `<h1 style="font-family:sans-serif;padding:40px;color:red;">WRSGwiggle Error: ${e.message}</h1>`;
   }
 });
